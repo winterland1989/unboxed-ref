@@ -22,7 +22,7 @@ module Data.IORef.Unboxed
   , writeIORefU
   , modifyIORefU
     -- * Atomic operations for @IORefU Int@
-  , Counter(..)
+  , Counter
   , newCounter
   , atomicAddCounter
   , atomicSubCounter
@@ -70,7 +70,7 @@ modifyIORefU :: Prim a => IORefU a -> (a -> a) -> IO ()
 modifyIORefU ref f = readIORefU ref >>= writeIORefU ref . f
 {-# INLINE modifyIORefU #-}
 
--- | Alias for 'IORefU Int' which supports atomic operations.
+-- | Alias for 'IORefU Int' which support several atomic operations.
 --
 type Counter = IORefU Int
 
@@ -80,42 +80,44 @@ newCounter :: Int -> IO Counter
 newCounter = newIORefU
 {-# INLINE newCounter #-}
 
--- | Atomically add a 'Counter', Returns the value AFTER added.
+-- | Atomically add a 'Counter', return the value AFTER added.
+--
+-- It's implemented using fetch-and-add primitive, which is much faster than a CAS loop(@atomicModifyIORef@).
 --
 atomicAddCounter :: Counter -> Int -> IO Int
 atomicAddCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
     let (# s2#, res #) = fetchAddIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
 {-# INLINE atomicAddCounter #-}
 
--- | Atomically sub a 'Counter', Returns the value AFTER subbed.
+-- | Atomically sub a 'Counter', return the value AFTER subbed.
 --
 atomicSubCounter :: Counter -> Int -> IO Int
 atomicSubCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
     let (# s2#, res #) = fetchSubIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
 {-# INLINE atomicSubCounter #-}
 
--- | Atomically and a 'Counter', Returns the value AFTER anded.
+-- | Atomically and a 'Counter', return the value AFTER anded.
 --
 atomicAndCounter :: Counter -> Int -> IO Int
 atomicAndCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
     let (# s2#, res #) = fetchAndIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
 {-# INLINE atomicAndCounter #-}
 
--- | Atomically nand a 'Counter', Returns the value AFTER nanded.
+-- | Atomically nand a 'Counter', return the value AFTER nanded.
 --
 atomicNandCounter :: Counter -> Int -> IO Int
 atomicNandCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
     let (# s2#, res #) = fetchNandIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
 {-# INLINE atomicNandCounter #-}
 
--- | Atomically or a 'Counter', Returns the value AFTER ored.
+-- | Atomically or a 'Counter', return the value AFTER ored.
 --
 atomicOrCounter :: Counter -> Int -> IO Int
 atomicOrCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
     let (# s2#, res #) = fetchOrIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
 {-# INLINE atomicOrCounter #-}
 
--- | Atomically xor a 'Counter', Returns the value AFTER xored.
+-- | Atomically xor a 'Counter', return the value AFTER xored.
 --
 atomicXorCounter :: Counter -> Int -> IO Int
 atomicXorCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
