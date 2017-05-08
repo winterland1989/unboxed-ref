@@ -37,7 +37,7 @@ import Data.Primitive.ByteArray
 import GHC.Prim
 import GHC.Types
 import GHC.ST
-import Control.Monad.ST.Unsafe (unsafeSTToIO)
+import GHC.IO(stToIO)
 import Data.STRef.Unboxed.Internal
 
 -- | A mutable variable in the IO monad which can hold an instance of 'Prim'.
@@ -47,19 +47,19 @@ newtype IORefU a = IORefU (STRefU RealWorld a)
 -- | Build a new 'IORefU'
 --
 newIORefU :: Prim a => a -> IO (IORefU a)
-newIORefU init = IORefU `fmap` unsafeSTToIO (newSTRefU init)
+newIORefU init = IORefU `fmap` stToIO (newSTRefU init)
 {-# INLINE newIORefU #-}
 
 -- | Read the value of an 'IORefU'
 --
 readIORefU :: Prim a => IORefU a -> IO a
-readIORefU (IORefU stRefU) = unsafeSTToIO (readSTRefU stRefU)
+readIORefU (IORefU stRefU) = stToIO (readSTRefU stRefU)
 {-# INLINE readIORefU #-}
 
 -- | Write a new value into an 'IORefU'
 --
 writeIORefU :: Prim a => IORefU a -> a -> IO ()
-writeIORefU (IORefU stRefU) x = unsafeSTToIO (writeSTRefU stRefU x)
+writeIORefU (IORefU stRefU) x = stToIO (writeSTRefU stRefU x)
 {-# INLINE writeIORefU #-}
 
 -- | Mutate the contents of an 'IORef'.

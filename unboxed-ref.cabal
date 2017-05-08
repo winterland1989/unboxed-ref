@@ -1,5 +1,5 @@
 name:                unboxed-ref
-version:             0.2.0.0
+version:             0.3.0.0
 synopsis:            Fast unboxed references for ST and IO monad
 description:         Fast unboxed references for ST and IO monad
 license:             BSD3
