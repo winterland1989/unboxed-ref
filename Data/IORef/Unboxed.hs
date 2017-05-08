@@ -93,33 +93,33 @@ atomicAddCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# 
 --
 atomicSubCounter :: Counter -> Int -> IO Int
 atomicSubCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchSubIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
+    let (# s2#, res #) = fetchSubIntArray# mba# 0# x# s1# in (# s2#, (I# (res -# x#)) #)
 {-# INLINE atomicSubCounter #-}
 
 -- | Atomically and a 'Counter', return the value AFTER anded.
 --
 atomicAndCounter :: Counter -> Int -> IO Int
 atomicAndCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchAndIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
+    let (# s2#, res #) = fetchAndIntArray# mba# 0# x# s1# in (# s2#, (I# (res `andI#` x#)) #)
 {-# INLINE atomicAndCounter #-}
 
 -- | Atomically nand a 'Counter', return the value AFTER nanded.
 --
 atomicNandCounter :: Counter -> Int -> IO Int
 atomicNandCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchNandIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
+    let (# s2#, res #) = fetchNandIntArray# mba# 0# x# s1# in (# s2#, (I# (notI# (res `andI#` x#))) #)
 {-# INLINE atomicNandCounter #-}
 
 -- | Atomically or a 'Counter', return the value AFTER ored.
 --
 atomicOrCounter :: Counter -> Int -> IO Int
 atomicOrCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchOrIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
+    let (# s2#, res #) = fetchOrIntArray# mba# 0# x# s1# in (# s2#, (I# (res `orI#` x#)) #)
 {-# INLINE atomicOrCounter #-}
 
 -- | Atomically xor a 'Counter', return the value AFTER xored.
 --
 atomicXorCounter :: Counter -> Int -> IO Int
 atomicXorCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchXorIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
+    let (# s2#, res #) = fetchXorIntArray# mba# 0# x# s1# in (# s2#, (I# (res `xorI#` x#)) #)
 {-# INLINE atomicXorCounter #-}
