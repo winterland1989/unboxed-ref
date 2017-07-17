@@ -2,6 +2,7 @@ unboxed-ref
 ===========
 
 [![Hackage](https://img.shields.io/hackage/v/unboxed-ref.svg?style=flat)](http://hackage.haskell.org/package/unboxed-ref)
+[![Test Status](https://img.shields.io/travis/winterland1989/unboxed-ref.svg)](https://travis-ci.org/winterland1989/unboxed-ref)
 
 This package provide fast unboxed references for `ST` and `IO` monad and atomic operations for `IORefU Int` type. Unboxed reference is implemented using single cell `MutableByteArray s` to eliminate indirection overhead which `MutVar# s a` carry, on the otherhand unboxed reference only support limited type(instances of `Prim` class).
 
