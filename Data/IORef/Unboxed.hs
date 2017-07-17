@@ -97,6 +97,8 @@ atomicAddCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# 
 
 -- | Atomically add a 'Counter', return the value BEFORE added.
 --
+-- @since 0.4.0.0
+--
 atomicAddCounter_ :: Counter -> Int -> IO Int
 atomicAddCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
     let (# s2#, res# #) = fetchAddIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
@@ -110,6 +112,8 @@ atomicSubCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# 
 {-# INLINE atomicSubCounter #-}
 
 -- | Atomically sub a 'Counter', return the value BEFORE subbed.
+--
+-- @since 0.4.0.0
 --
 atomicSubCounter_ :: Counter -> Int -> IO Int
 atomicSubCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
@@ -127,6 +131,8 @@ atomicAndCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# 
 --
 -- You can leverage idempotence of anding zero to make a concurrent resource lock.
 --
+-- @since 0.4.0.0
+--
 atomicAndCounter_ :: Counter -> Int -> IO Int
 atomicAndCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
     let (# s2#, res# #) = fetchAndIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
@@ -140,6 +146,8 @@ atomicNandCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1#
 {-# INLINE atomicNandCounter #-}
 
 -- | Atomically nand a 'Counter', return the value BEFORE nanded.
+--
+-- @since 0.4.0.0
 --
 atomicNandCounter_ :: Counter -> Int -> IO Int
 atomicNandCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
@@ -155,6 +163,8 @@ atomicOrCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# -
 
 -- | Atomically or a 'Counter', return the value BEFORE ored.
 --
+-- @since 0.4.0.0
+--
 atomicOrCounter_ :: Counter -> Int -> IO Int
 atomicOrCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
     let (# s2#, res# #) = fetchOrIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
@@ -168,6 +178,8 @@ atomicXorCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# 
 {-# INLINE atomicXorCounter #-}
 
 -- | Atomically xor a 'Counter', return the value BEFORE xored.
+--
+-- @since 0.4.0.0
 --
 atomicXorCounter_ :: Counter -> Int -> IO Int
 atomicXorCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->

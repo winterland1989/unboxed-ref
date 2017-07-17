@@ -1,5 +1,5 @@
 name:                unboxed-ref
-version:             0.3.0.0
+version:             0.4.0.0
 synopsis:            Fast unboxed references for ST and IO monad
 description:         Fast unboxed references for ST and IO monad
 license:             BSD3
@@ -14,6 +14,10 @@ extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 homepage:            https://github.com/winterland1989/unboxed-ref
 bug-reports:         https://github.com/winterland1989/unboxed-ref/issues
+
+source-repository head
+  type:     git
+  location: git://github.com/winterland1989/unboxed-ref.git
 
 library
     exposed-modules:     Data.IORef.Unboxed
