@@ -30,6 +30,12 @@ module Data.IORef.Unboxed
   , atomicNandCounter
   , atomicOrCounter
   , atomicXorCounter
+  , atomicAddCounter_
+  , atomicSubCounter_
+  , atomicAndCounter_
+  , atomicNandCounter_
+  , atomicOrCounter_
+  , atomicXorCounter_
   ) where
 
 import Data.Primitive.Types
@@ -86,40 +92,84 @@ newCounter = newIORefU
 --
 atomicAddCounter :: Counter -> Int -> IO Int
 atomicAddCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchAddIntArray# mba# 0# x# s1# in (# s2#, (I# (res +# x#)) #)
+    let (# s2#, res# #) = fetchAddIntArray# mba# 0# x# s1# in (# s2#, (I# (res# +# x#)) #)
 {-# INLINE atomicAddCounter #-}
+
+-- | Atomically add a 'Counter', return the value BEFORE added.
+--
+atomicAddCounter_ :: Counter -> Int -> IO Int
+atomicAddCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
+    let (# s2#, res# #) = fetchAddIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
+{-# INLINE atomicAddCounter_ #-}
 
 -- | Atomically sub a 'Counter', return the value AFTER subbed.
 --
 atomicSubCounter :: Counter -> Int -> IO Int
 atomicSubCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchSubIntArray# mba# 0# x# s1# in (# s2#, (I# (res -# x#)) #)
+    let (# s2#, res# #) = fetchSubIntArray# mba# 0# x# s1# in (# s2#, (I# (res# -# x#)) #)
 {-# INLINE atomicSubCounter #-}
+
+-- | Atomically sub a 'Counter', return the value BEFORE subbed.
+--
+atomicSubCounter_ :: Counter -> Int -> IO Int
+atomicSubCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
+    let (# s2#, res# #) = fetchSubIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
+{-# INLINE atomicSubCounter_ #-}
 
 -- | Atomically and a 'Counter', return the value AFTER anded.
 --
 atomicAndCounter :: Counter -> Int -> IO Int
 atomicAndCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchAndIntArray# mba# 0# x# s1# in (# s2#, (I# (res `andI#` x#)) #)
+    let (# s2#, res# #) = fetchAndIntArray# mba# 0# x# s1# in (# s2#, (I# (res# `andI#` x#)) #)
 {-# INLINE atomicAndCounter #-}
+
+-- | Atomically and a 'Counter', return the value BEFORE anded.
+--
+-- You can leverage idempotence of anding zero to make a concurrent resource lock.
+--
+atomicAndCounter_ :: Counter -> Int -> IO Int
+atomicAndCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
+    let (# s2#, res# #) = fetchAndIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
+{-# INLINE atomicAndCounter_ #-}
 
 -- | Atomically nand a 'Counter', return the value AFTER nanded.
 --
 atomicNandCounter :: Counter -> Int -> IO Int
 atomicNandCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchNandIntArray# mba# 0# x# s1# in (# s2#, (I# (notI# (res `andI#` x#))) #)
+    let (# s2#, res# #) = fetchNandIntArray# mba# 0# x# s1# in (# s2#, (I# (notI# (res# `andI#` x#))) #)
 {-# INLINE atomicNandCounter #-}
+
+-- | Atomically nand a 'Counter', return the value BEFORE nanded.
+--
+atomicNandCounter_ :: Counter -> Int -> IO Int
+atomicNandCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
+    let (# s2#, res# #) = fetchNandIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
+{-# INLINE atomicNandCounter_ #-}
 
 -- | Atomically or a 'Counter', return the value AFTER ored.
 --
 atomicOrCounter :: Counter -> Int -> IO Int
 atomicOrCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchOrIntArray# mba# 0# x# s1# in (# s2#, (I# (res `orI#` x#)) #)
+    let (# s2#, res# #) = fetchOrIntArray# mba# 0# x# s1# in (# s2#, (I# (res# `orI#` x#)) #)
 {-# INLINE atomicOrCounter #-}
+
+-- | Atomically or a 'Counter', return the value BEFORE ored.
+--
+atomicOrCounter_ :: Counter -> Int -> IO Int
+atomicOrCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
+    let (# s2#, res# #) = fetchOrIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
+{-# INLINE atomicOrCounter_ #-}
 
 -- | Atomically xor a 'Counter', return the value AFTER xored.
 --
 atomicXorCounter :: Counter -> Int -> IO Int
 atomicXorCounter (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
-    let (# s2#, res #) = fetchXorIntArray# mba# 0# x# s1# in (# s2#, (I# (res `xorI#` x#)) #)
+    let (# s2#, res# #) = fetchXorIntArray# mba# 0# x# s1# in (# s2#, (I# (res# `xorI#` x#)) #)
 {-# INLINE atomicXorCounter #-}
+
+-- | Atomically xor a 'Counter', return the value BEFORE xored.
+--
+atomicXorCounter_ :: Counter -> Int -> IO Int
+atomicXorCounter_ (IORefU (STRefU (MutableByteArray mba#))) (I# x#) = IO $ \ s1# ->
+    let (# s2#, res# #) = fetchXorIntArray# mba# 0# x# s1# in (# s2#, (I# res#) #)
+{-# INLINE atomicXorCounter_ #-}
